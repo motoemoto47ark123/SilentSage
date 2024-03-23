@@ -28,6 +28,8 @@ class SettingsPage extends StatelessWidget {
                   onChanged: (value) {
                     isDarkMode.value = value; // Update the entire app theme
                   },
+                  activeTrackColor: Colors.redAccent, // Adjust visibility in dark mode with red to follow the new instruction
+                  activeColor: Colors.red, // Ensure the switch thumb is red when active for better visibility in dark mode
                 ),
               ],
             ),
