@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 // Defines the GPTAPI class to manage interactions with the GPT API.
 class GPTAPI {
   // Holds the URL of the GPT API endpoint as a constant string.
-  static const String _apiEndpoint = "http://gpt-proxy.motoemotovps.serv00.net/chat";
+  static const String _apiEndpoint = "https://gpt-proxy.motoemotovps.serv00.net/chat"; // Updated to use HTTPS
   // Static variable to store the chat ID for maintaining the session state.
   static String? _chatId;
 
