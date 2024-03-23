@@ -5,7 +5,8 @@ import 'gpt-api.dart';
 import 'settings.dart';
 import 'status.dart';
 
-final ValueNotifier<bool> isDarkMode = ValueNotifier(false); // Starts in light mode
+final ValueNotifier<bool> isDarkMode =
+    ValueNotifier(true); // Updated to start in dark mode
 
 void main() => runApp(const MyApp());
 
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
       valueListenable: isDarkMode,
       builder: (context, isDark, _) {
         return MaterialApp(
-          theme: isDark ? ThemeData.dark() : ThemeData.light(), // Theme changes based on isDarkMode
+          theme: isDark ? ThemeData.dark() : ThemeData.light(), // Toggle theme based on isDark
           home: const MyHomePage(),
         );
       },
@@ -37,6 +38,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final types.User user = const types.User(id: 'user');
   final List<types.Message> messages = [];
   int _selectedIndex = 0;
+  Future<String>? _futureMessage;
 
   void _addMessage(String text, {bool isUserMessage = true}) {
     final types.TextMessage message = types.TextMessage(
@@ -53,7 +55,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _sendMessage(String text) {
     _addMessage(text); // User messages
-    GPTAPI.sendMessage(text).then((response) {
+    _futureMessage = GPTAPI.sendMessage(text);
+    _futureMessage!.then((response) {
       _addMessage(response, isUserMessage: false); // AI messages
     }).catchError((error) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -73,31 +76,27 @@ class _MyHomePageState extends State<MyHomePage> {
       _selectedIndex = index;
     });
     if (index == 1) {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const StatusPage()));
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => const StatusPage()));
     } else if (index == 2) {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SettingsPage()));
+      Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (context) => const SettingsPage()));
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<bool>(
-      valueListenable: isDarkMode,
-      builder: (context, isDark, _) {
-        return Scaffold(
-          appBar: AppBar(
-            backgroundColor: isDark ? Colors.black : Colors.white, // AppBar color based on theme
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.refresh),
-                onPressed: _resetChat,
-              ),
-            ],
-            title: const Text('Chat with AI'),
-          ),
-          body: Container(
-            color: isDark ? Colors.black : Colors.white, // Background color based on theme
-            child: Chat(
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Chat with AI'),
+      ),
+      body: FutureBuilder<String>(
+        future: _futureMessage,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else {
+            return Chat(
               messages: messages,
               onSendPressed: (types.PartialText text) {
                 _sendMessage(text.text);
@@ -105,37 +104,31 @@ class _MyHomePageState extends State<MyHomePage> {
               user: user,
               emojiEnlargementBehavior: EmojiEnlargementBehavior.multi,
               hideBackgroundOnEmojiMessages: true,
-              theme: ChatTheme(
-                inputBackgroundColor: isDark ? Colors.black : Colors.white,
-                inputTextColor: isDark ? Colors.white : Colors.black,
-                backgroundColor: isDark ? Colors.black : Colors.white,
-                primaryColor: isDark ? Colors.black : Colors.white,
-              ),
-            ),
+            );
+          }
+        },
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: isDarkMode.value ? Colors.black : Colors.white, // Toggle BottomNavigationBar color based on isDarkMode
+        selectedItemColor: Colors.red,
+        unselectedItemColor: Colors.grey,
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.chat),
+            label: 'Chat',
           ),
-          bottomNavigationBar: BottomNavigationBar(
-            backgroundColor: isDark ? Colors.black : Colors.white, // BottomNavigationBar color based on theme
-            selectedItemColor: Colors.red, // Keep the selected item color consistent across themes
-            unselectedItemColor: isDark ? Colors.white : Colors.black, // Adjust unselected item color based on theme
-            items: const <BottomNavigationBarItem>[
-              BottomNavigationBarItem(
-                icon: Icon(Icons.chat),
-                label: 'Chat',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.assessment),
-                label: 'Status',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.settings),
-                label: 'Settings',
-              ),
-            ],
-            currentIndex: _selectedIndex,
-            onTap: _onItemTapped,
+          BottomNavigationBarItem(
+            icon: Icon(Icons.assessment),
+            label: 'Status',
           ),
-        );
-      },
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+      ),
     );
   }
 }
