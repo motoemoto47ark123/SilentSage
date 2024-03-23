@@ -17,14 +17,19 @@ class MyApp extends StatelessWidget {
       builder: (context, value, child) {
         return MaterialApp(
           title: _title,
-          theme: ThemeData(
-            brightness: value ? Brightness.dark : Brightness.light, // Adjust brightness based on the ValueNotifier
-            primaryColor: value ? Colors.grey[850] : Colors.white, // Adjust primary color based on the theme, using dark grey for dark mode
-            appBarTheme: AppBarTheme(
-              backgroundColor: value ? Colors.grey[850] : Colors.white, // Ensure AppBar color consistency across the app
+          theme: value ? ThemeData.dark().copyWith(
+            primaryColor: Colors.black, // Set primary color for dark mode
+            scaffoldBackgroundColor: Colors.black, // Set scaffold background color for dark mode
+            colorScheme: ColorScheme.dark().copyWith(
+              primary: Colors.black,
+              secondary: Colors.red, // Keeping red as the secondary color for dark theme
             ),
-            colorScheme: ColorScheme.fromSwatch().copyWith(
-              secondary: Colors.red, // Keeping red as the secondary color for both themes
+          ) : ThemeData.light().copyWith(
+            primaryColor: Colors.white, // Set primary color for light mode
+            scaffoldBackgroundColor: Colors.white, // Set scaffold background color for light mode
+            colorScheme: ColorScheme.light().copyWith(
+              primary: Colors.white,
+              secondary: Colors.red, // Keeping red as the secondary color for light theme
             ),
           ),
           home: const MyHomePage(),
@@ -43,7 +48,7 @@ class MyHomePage extends StatefulWidget {
 
 class MyHomePageState extends State<MyHomePage> { // Made MyHomePageState public to fix the invalid use of a private type in a public API
   int _counter = 0;
-  int _selectedIndex = 0; // Added to track the current index
+  int _selectedIndex = 2; // Updated to indicate that we are on the Main Page
 
   void incrementCounter() { // Made incrementCounter public to fix the declaration '_incrementCounter' isn't referenced error
     setState(() {
@@ -57,11 +62,14 @@ class MyHomePageState extends State<MyHomePage> { // Made MyHomePageState public
         _selectedIndex = index;
       });
       if (index == 0) {
-        // Navigate to Settings Page
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SettingsPage())); // Using pushReplacement to avoid stacking
+        // Navigate to Home Page
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MyApp())); // Using pushReplacement to avoid stacking
       } else if (index == 1) {
         // Navigate to Status Page
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const StatusPage())); // Using pushReplacement to avoid stacking
+      } else if (index == 2) {
+        // Navigate to Settings Page
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SettingsPage())); // Using pushReplacement to avoid stacking
       }
     }
   }
@@ -71,6 +79,7 @@ class MyHomePageState extends State<MyHomePage> { // Made MyHomePageState public
     return Scaffold(
       appBar: AppBar(
         title: const Text('Flutter Demo Click Counter'),
+        backgroundColor: isDarkMode.value ? Colors.black : Colors.white, // Adjust AppBar color based on theme
       ),
       body: Center(
         child: Column(
@@ -81,7 +90,7 @@ class MyHomePageState extends State<MyHomePage> { // Made MyHomePageState public
             ),
             Text(
               '$_counter',
-              style: const TextStyle(fontSize: 25),
+              style: TextStyle(fontSize: 25, color: isDarkMode.value ? Colors.red : Colors.black), // Adjust text color based on theme
             ),
           ],
         ),
@@ -89,16 +98,22 @@ class MyHomePageState extends State<MyHomePage> { // Made MyHomePageState public
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
+            icon: Icon(Icons.home),
+            label: 'Home',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.assessment),
             label: 'Status',
           ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
+          ),
         ],
-        currentIndex: _selectedIndex, // Added to manage the current selection
+        currentIndex: _selectedIndex, // Updated to manage the current selection indicating we are on the Main Page
         onTap: _onItemTapped,
+        backgroundColor: isDarkMode.value ? Colors.black : Colors.white, // Adjust BottomNavigationBar background color based on theme
+        selectedItemColor: Colors.red, // Keep the selected item color consistent across themes
       ),
     );
   }

@@ -13,44 +13,53 @@ class StatusPage extends StatelessWidget {
         return Scaffold(
           appBar: AppBar(
             title: const Text('Status Page'),
-            backgroundColor: isDark ? Colors.grey[850] : Colors.blue, // Correctly using a dark grey for dark theme
+            backgroundColor: isDark ? Colors.black : Colors.white, // Using black for dark theme and white for light theme
           ),
           body: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: const <Widget>[ // Use 'const' with the constructor to improve performance.
+              children: <Widget>[ // Removed 'const' to allow for dynamic color changes
                 Text(
                   'Uptime 99%',
-                  style: TextStyle(fontSize: 25, color: Colors.green), // Correctly adjusting text color based on theme
+                  style: TextStyle(fontSize: 25, color: Colors.red), // Using red text color for both themes
                 ),
                 SizedBox(height: 10),
                 LinearProgressIndicator(
                   value: 0.99,
-                  backgroundColor: Colors.grey,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.green), // Correctly adjusting progress bar color based on theme
+                  backgroundColor: isDark ? Colors.grey : Colors.white, // Adjusting background color based on theme
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.red), // Using red for the progress bar in both themes
                 ),
               ],
             ),
           ),
           bottomNavigationBar: BottomNavigationBar(
+            backgroundColor: isDark ? Colors.black : Colors.white, // Adjusting bottom navigation bar background color based on theme
             items: const <BottomNavigationBarItem>[
-              BottomNavigationBarItem(
-                icon: Icon(Icons.settings),
-                label: 'Settings',
-              ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.home),
                 label: 'Home',
               ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.assessment),
+                label: 'Status',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.settings),
+                label: 'Settings',
+              ),
             ],
+            currentIndex: 1, // Indicating that we are on the Status Page
             onTap: (index) {
               // Correctly handling navigation to respective pages when tapping on items
-              if (index == 0) {
-                // Navigate to Settings Page
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SettingsPage())); // Correctly using pushReplacement to avoid stacking
-              } else if (index == 1) {
-                // Navigate back to Home Page
-                Navigator.pop(context); // Correctly ensuring we're popping to avoid unnecessary stack buildup
+              switch (index) {
+                case 0:
+                  // Navigate back to Home Page
+                  Navigator.pop(context); // Correctly ensuring we're popping to avoid unnecessary stack buildup
+                  break;
+                case 2:
+                  // Navigate to Settings Page
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SettingsPage())); // Correctly using pushReplacement to avoid stacking
+                  break;
               }
             },
           ),

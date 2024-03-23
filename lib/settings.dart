@@ -13,7 +13,7 @@ class SettingsPage extends StatelessWidget {
         return Scaffold(
           appBar: AppBar(
             title: const Text('Settings Page'),
-            backgroundColor: isDark ? Colors.grey[850] : Theme.of(context).appBarTheme.backgroundColor, // Adjust AppBar color based on theme, using dark grey for dark mode
+            backgroundColor: isDark ? Colors.black : Colors.white, // Adjust AppBar color based on theme, using black for dark mode and white for light mode
           ),
           body: Center(
             child: Column(
@@ -21,14 +21,13 @@ class SettingsPage extends StatelessWidget {
               children: <Widget>[
                 Text(
                   'Toggle Dark Mode',
-                  style: TextStyle(fontSize: 25, color: isDark ? Colors.red : Colors.black), // Adjust text color based on theme
+                  style: TextStyle(fontSize: 25, color: isDark ? Colors.red : Colors.red), // Adjust text color based on theme, using red for both modes
                 ),
                 Switch(
                   value: isDark,
                   onChanged: (value) {
                     isDarkMode.value = value; // Update the entire app theme
                   },
-                  // Removed semanticLabel as it's not a defined parameter for Switch widget
                 ),
               ],
             ),
@@ -38,26 +37,31 @@ class SettingsPage extends StatelessWidget {
               BottomNavigationBarItem(
                 icon: Icon(Icons.home),
                 label: 'Main Page',
-                // Added semantic labels for better accessibility
-                tooltip: 'Navigate to Main Page',
+                tooltip: 'Navigate to Main Page', // Added semantic labels for better accessibility
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.assessment),
                 label: 'Status',
-                // Added semantic labels for better accessibility
-                tooltip: 'Navigate to Status Page',
+                tooltip: 'Navigate to Status Page', // Added semantic labels for better accessibility
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.settings),
+                label: 'Settings',
+                tooltip: 'You are on the Settings Page', // Indicate current page
               ),
             ],
+            currentIndex: 2, // Indicate that we are on the Settings Page
             onTap: (index) {
               // Handle navigation to respective pages when tapping on items
-              if (index == 0) {
-                // Navigate back to Home Page
-                if (!ModalRoute.of(context)!.isFirst) {
-                  Navigator.pop(context);
-                }
-              } else if (index == 1) {
-                // Navigate to Status Page
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const StatusPage()));
+              switch (index) {
+                case 0:
+                  // Navigate to Main Page
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MyApp()));
+                  break;
+                case 1:
+                  // Navigate to Status Page
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const StatusPage()));
+                  break;
               }
             },
           ),
