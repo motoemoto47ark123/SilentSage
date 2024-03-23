@@ -30,7 +30,7 @@ class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  State<MyHomePage> createState() => _MyHomePageState(); // Corrected visibility of _MyHomePageState
 }
 
 class _MyHomePageState extends State<MyHomePage> {
@@ -92,16 +92,14 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: isDarkMode.value ? Colors.black : Colors.white,
       ),
       body: Chat(
-        messages: messages.map((m) => m as types.Message).toList(), // Corrected Message class reference and casting
+        messages: messages, // Removed unnecessary cast
         onSendPressed: (text) {
           _sendMessage(text.text);
         },
         user: user,
-        emojiEnlargementBehavior: types.EmojiEnlargementBehavior.multi, // Added required parameter
-        hideBackgroundOnEmojiMessages: true, // Added required parameter
-        message: types.TextMessage(text: '', author: user, id: '', createdAt: DateTime.now().millisecondsSinceEpoch), // Added required parameter
-        showName: true, // Added required parameter
-        usePreviewData: true, // Added required parameter
+        emojiEnlargementBehavior: EmojiEnlargementBehavior.multi, // Removed 'types.' prefix and corrected reference
+        hideBackgroundOnEmojiMessages: true,
+        // Removed 'message', 'showName', and 'usePreviewData' parameters as they are not defined in the current version of flutter_chat_ui
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
