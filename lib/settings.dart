@@ -34,7 +34,7 @@ class SettingsPage extends StatelessWidget {
                   thumbColor: MaterialStateProperty.all(Colors.black), // Ensure the thumb color is black
                   trackColor: MaterialStateProperty.all(Colors.black.withOpacity(0.5)), // Slightly transparent black track color
                   splashRadius: 28, // Increase splash radius for visual feedback
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20), side: BorderSide(color: Colors.black, width: 2)), // Black outline around the switch
+                  // Removed the 'shape' parameter as it's not defined for the Switch widget
                 ),
               ],
             ),

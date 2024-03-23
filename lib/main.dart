@@ -37,7 +37,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final types.User user = const types.User(id: 'user');
   final List<types.Message> messages = [];
   int _selectedIndex = 0;
-  bool _isLoading = false;
+  // Removed unused _isLoading field
 
   void _addMessage(String text, {bool isUserMessage = true}) {
     final types.TextMessage message = types.TextMessage(
@@ -55,9 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _sendMessage(String text) {
-    setState(() {
-      _isLoading = true;
-    });
+    // Removed setState call for _isLoading since it's unused
     _addMessage(text); // User messages
     GPTAPI.sendMessage(text).then((response) {
       _addMessage(response, isUserMessage: false); // AI messages
@@ -65,10 +63,6 @@ class _MyHomePageState extends State<MyHomePage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to send message: $error')),
       );
-    }).whenComplete(() {
-      setState(() {
-        _isLoading = false;
-      });
     });
   }
 
@@ -109,13 +103,13 @@ class _MyHomePageState extends State<MyHomePage> {
             color: isDark ? Colors.black : Colors.white, // Background color based on theme
             child: Chat(
               messages: messages,
-              onSendPressed: (text) {
+              onSendPressed: (types.PartialText text) {
                 _sendMessage(text.text);
               },
               user: user,
               emojiEnlargementBehavior: EmojiEnlargementBehavior.multi,
               hideBackgroundOnEmojiMessages: true,
-              customMessageBuilder: (message) {
+              customMessageBuilder: (message, {required int messageWidth}) {
                 // Custom message bubble colors
                 if (message is types.TextMessage) {
                   final color = message.metadata?['color'] == 'red' ? Colors.red : Colors.blue;
@@ -133,7 +127,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   );
                 }
-                return null;
+                return SizedBox.shrink(); // Return an empty widget instead of null
               },
             ),
           ),
