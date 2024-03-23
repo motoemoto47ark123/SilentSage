@@ -1,25 +1,28 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_chat_ui/flutter_chat_ui.dart';
-import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
-import 'gpt-api.dart';
-import 'settings.dart';
-import 'status.dart';
+import 'package:flutter/material.dart'; // Importing Flutter Material Design package
+import 'package:flutter_chat_ui/flutter_chat_ui.dart'; // Importing Flutter Chat UI package for chat UI components
+import 'package:flutter_chat_types/flutter_chat_types.dart' as types; // Importing Flutter Chat Types with alias for message types
+import 'gpt-api.dart'; // Importing custom GPT API handler
+import 'settings.dart'; // Importing settings page
+import 'status.dart'; // Importing status page
 
-final ValueNotifier<bool> isDarkMode =
-    ValueNotifier(false); // Updated to start in light mode
+// Global notifier for theme mode (dark/light)
+final ValueNotifier<bool> isDarkMode = ValueNotifier(false);
 
+// Main entry point of the application
 void main() => runApp(const MyApp());
 
+// MyApp widget, the root of the application
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  // Builds the MaterialApp with theme based on isDarkMode
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<bool>(
       valueListenable: isDarkMode,
       builder: (context, isDark, _) {
         return MaterialApp(
-          theme: isDark ? ThemeData.dark() : ThemeData.light(), // Toggle theme based on isDark
+          theme: isDark ? ThemeData.dark() : ThemeData.light(),
           home: const MyHomePage(),
         );
       },
@@ -27,6 +30,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
+// Stateful widget for the home page
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
 
@@ -34,12 +38,14 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
+// State class for MyHomePage
 class _MyHomePageState extends State<MyHomePage> {
-  final types.User user = const types.User(id: 'user');
-  final List<types.Message> messages = [];
-  int _selectedIndex = 0;
-  Future<String>? _futureMessage;
+  final types.User user = const types.User(id: 'user'); // User object for chat
+  final List<types.Message> messages = []; // List to store chat messages
+  int _selectedIndex = 0; // Index for bottom navigation bar
+  Future<String>? _futureMessage; // Future for handling async message sending
 
+  // Function to add a message to the chat
   void _addMessage(String text, {bool isUserMessage = true}) {
     final types.TextMessage message = types.TextMessage(
       author: isUserMessage ? user : const types.User(id: 'ai'),
@@ -53,11 +59,12 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  // Function to send a message and handle AI response
   void _sendMessage(String text) {
-    _addMessage(text); // User messages
+    _addMessage(text);
     _futureMessage = GPTAPI.sendMessage(text);
     _futureMessage!.then((response) {
-      _addMessage(response, isUserMessage: false); // AI messages
+      _addMessage(response, isUserMessage: false);
     }).catchError((error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to send message: $error')),
@@ -65,13 +72,15 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  // Function to reset the chat
   void _resetChat() {
     setState(() {
       messages.clear();
-      GPTAPI.resetChatId(); // Correctly call resetChatId to clean the _chatId
+      GPTAPI.resetChatId();
     });
   }
 
+  // Function to handle bottom navigation bar item tap
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -85,6 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  // Builds the UI for the home page
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -93,7 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.refresh),
-            onPressed: _resetChat, // Added reset chat functionality to AppBar
+            onPressed: _resetChat,
           ),
         ],
       ),
@@ -116,7 +126,7 @@ class _MyHomePageState extends State<MyHomePage> {
         },
       ),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: isDarkMode.value ? Colors.black : Colors.white, // Toggle BottomNavigationBar color based on isDarkMode
+        backgroundColor: isDarkMode.value ? Colors.black : Colors.white,
         selectedItemColor: Colors.red,
         unselectedItemColor: Colors.grey,
         items: const <BottomNavigationBarItem>[
