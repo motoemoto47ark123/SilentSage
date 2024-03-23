@@ -33,11 +33,13 @@ class StatusPage extends StatelessWidget {
             ),
           ),
           bottomNavigationBar: BottomNavigationBar(
-            backgroundColor: isDark ? Colors.black : Colors.white, // Adjusting bottom navigation bar background color based on theme
+            backgroundColor: isDark ? Colors.black : Colors.white, // Toggle BottomNavigationBar color based on isDarkMode
+            selectedItemColor: Colors.red,
+            unselectedItemColor: Colors.grey,
             items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(
-                icon: Icon(Icons.home),
-                label: 'Home Page', // Renamed to Home Page
+                icon: Icon(Icons.chat),
+                label: 'Chat',
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.assessment),
@@ -49,19 +51,11 @@ class StatusPage extends StatelessWidget {
               ),
             ],
             currentIndex: 1, // Indicating that we are on the Status Page
-            selectedItemColor: Colors.red, // Keep the selected item color consistent across themes
-            unselectedItemColor: isDark ? Colors.white : Colors.black, // Adjust unselected item color based on theme
             onTap: (index) {
-              // Correctly handling navigation to respective pages when tapping on items
-              switch (index) {
-                case 0:
-                  // Navigate back to Home Page
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MyApp())); // Correctly using pushReplacement to avoid stacking
-                  break;
-                case 2:
-                  // Navigate to Settings Page
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SettingsPage())); // Correctly using pushReplacement to avoid stacking
-                  break;
+              if (index == 0) {
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MyApp()));
+              } else if (index == 2) {
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SettingsPage()));
               }
             },
           ),

@@ -39,43 +39,36 @@ class SettingsPage extends StatelessWidget {
             ),
           ),
           bottomNavigationBar: BottomNavigationBar(
+            backgroundColor: isDark ? Colors.black : Colors.white, // Toggle BottomNavigationBar color based on isDarkMode
+            selectedItemColor: Colors.red,
+            unselectedItemColor: Colors.grey,
             items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(
-                icon: Icon(Icons.home),
-                label: 'Home Page', // Renamed to Home Page
-                tooltip: 'Navigate to Main Page', // Added semantic labels for better accessibility
+                icon: Icon(Icons.chat),
+                label: 'Chat',
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.assessment),
                 label: 'Status',
-                tooltip: 'Navigate to Status Page', // Added semantic labels for better accessibility
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.settings),
                 label: 'Settings',
-                tooltip: 'You are on the Settings Page', // Indicate current page
               ),
             ],
-            currentIndex: 2, // Indicate that we are on the Settings Page
+            currentIndex: 2,
             onTap: (index) {
-              // Handle navigation to respective pages when tapping on items
-              switch (index) {
-                case 0:
-                  // Navigate to Main Page
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MyApp()));
-                  break;
-                case 1:
-                  // Navigate to Status Page
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const StatusPage()));
-                  break;
+              if (index == 0) {
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MyApp()));
+              } else if (index == 1) {
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const StatusPage()));
               }
             },
-            backgroundColor: isDark ? Colors.black : Colors.white, // Adjust BottomNavigationBar background color based on theme
-            selectedItemColor: Colors.red, // Keep the selected item color consistent across themes
-            unselectedItemColor: isDark ? Colors.white : Colors.black, // Adjust unselected item color based on theme
           ),
         );
       },
     );
   }
 }
+
+
