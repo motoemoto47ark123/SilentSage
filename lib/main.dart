@@ -105,6 +105,12 @@ class _MyHomePageState extends State<MyHomePage> {
               user: user,
               emojiEnlargementBehavior: EmojiEnlargementBehavior.multi,
               hideBackgroundOnEmojiMessages: true,
+              theme: ChatTheme(
+                inputBackgroundColor: isDark ? Colors.black : Colors.white,
+                inputTextColor: isDark ? Colors.white : Colors.black,
+                backgroundColor: isDark ? Colors.black : Colors.white,
+                primaryColor: isDark ? Colors.black : Colors.white,
+              ),
             ),
           ),
           bottomNavigationBar: BottomNavigationBar(
