@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
-import 'package:flutter_chat_types/flutter_chat_types.dart' as types; // Corrected import statement for flutter_chat_types
+import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'gpt-api.dart';
 import 'settings.dart';
 import 'status.dart';
-// Removed import for 'package:permission_handler/permission_handler.dart' as it does not exist
+import 'package:widget_loading/widget_loading.dart'; // Added import for widget_loading
 
-final ValueNotifier<bool> isDarkMode = ValueNotifier(false);
+final ValueNotifier<bool> isDarkMode = ValueNotifier(true); // Always dark mode
 
 void main() => runApp(const MyApp());
 
@@ -15,14 +15,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<bool>(
-      valueListenable: isDarkMode,
-      builder: (context, value, child) {
-        return MaterialApp(
-          theme: value ? ThemeData.dark() : ThemeData.light(),
-          home: const MyHomePage(),
-        );
-      },
+    return MaterialApp(
+      theme: ThemeData.dark(), // Always use dark theme
+      home: const MyHomePage(),
     );
   }
 }
@@ -31,25 +26,18 @@ class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState(); // Corrected visibility of _MyHomePageState
+  State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final types.User user = const types.User(id: 'user'); // Corrected User class reference
-  final List<types.Message> messages = []; // Corrected Message class reference
+  final types.User user = const types.User(id: 'user');
+  final List<types.Message> messages = [];
   int _selectedIndex = 0;
+  bool _isLoading = false; // Added loading state
 
-  @override
-  void initState() {
-    super.initState();
-    // _requestPermissions(); Removed _requestPermissions call as Permission handler is not used
-  }
-
-  // Removed _requestPermissions method as Permission handler is not used
-
-  void _addMessage(String text, {bool isUserMessage = true}) {
+  void _addMessage(String text, {bool isUserMessage = true, Color color = Colors.red}) {
     final types.TextMessage message = types.TextMessage(
-      author: isUserMessage ? user : const types.User(id: 'ai'), // Corrected User and TextMessage class references
+      author: isUserMessage ? user : const types.User(id: 'ai'),
       createdAt: DateTime.now().millisecondsSinceEpoch,
       id: DateTime.now().toString(),
       text: text,
@@ -61,22 +49,26 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _sendMessage(String text) {
-    // Removed Permission check and directly add message
-    _addMessage(text);
+    setState(() {
+      _isLoading = true; // Start loading
+    });
+    _addMessage(text, color: Colors.red); // User messages in red
     GPTAPI.sendMessage(text).then((response) {
-      _addMessage(response, isUserMessage: false);
+      _addMessage(response, isUserMessage: false, color: Colors.blue); // AI messages in blue
     }).catchError((error) {
-      // Enhanced error handling
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to send message: $error')),
       );
+    }).whenComplete(() {
+      setState(() {
+        _isLoading = false; // Stop loading
+      });
     });
   }
 
   void _resetChat() {
     setState(() {
       messages.clear();
-      // Removed the call to GPTAPI.resetChatId() as it's not defined in GPTAPI
     });
   }
 
@@ -102,17 +94,23 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
         title: const Text('Chat with AI'),
-        backgroundColor: isDarkMode.value ? Colors.black : Colors.white,
       ),
-      body: Chat(
-        messages: messages, // Removed unnecessary cast
-        onSendPressed: (text) {
-          _sendMessage(text.text);
-        },
-        user: user,
-        emojiEnlargementBehavior: EmojiEnlargementBehavior.multi, // Removed 'types.' prefix and corrected reference
-        hideBackgroundOnEmojiMessages: true,
-        // Removed 'message', 'showName', and 'usePreviewData' parameters as they are not defined in the current version of flutter_chat_ui
+      body: Stack(
+        children: [
+          Chat(
+            messages: messages,
+            onSendPressed: (text) {
+              _sendMessage(text.text);
+            },
+            user: user,
+            emojiEnlargementBehavior: EmojiEnlargementBehavior.multi,
+            hideBackgroundOnEmojiMessages: true,
+          ),
+          if (_isLoading) // Show loading icon when processing
+            const Center(
+              child: LoadingBouncingLine.circle(),
+            ),
+        ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
@@ -131,9 +129,6 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        backgroundColor: isDarkMode.value ? Colors.black : Colors.white,
-        selectedItemColor: Colors.red,
-        unselectedItemColor: isDarkMode.value ? Colors.white : Colors.black,
       ),
     );
   }
