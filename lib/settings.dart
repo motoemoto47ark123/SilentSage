@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../main.dart'; // Import main.dart to access isDarkMode ValueNotifier
+import 'main.dart'; // Correct import path
+import 'status.dart'; // Correct import path for StatusPage
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({Key? key}) : super(key: key);

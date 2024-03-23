@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'pages/settings.dart'; // Assuming settings.dart is in the lib/pages directory
-import 'pages/status.dart'; // Assuming status.dart is in the lib/pages directory
+import 'settings.dart'; // Corrected import path as per the followup instruction
+import 'status.dart'; // Corrected import path as per the followup instruction
 
 final ValueNotifier<bool> isDarkMode = ValueNotifier(false); // Added ValueNotifier for theme change
 

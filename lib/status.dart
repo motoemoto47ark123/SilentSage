@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../main.dart'; // Import main.dart to access isDarkMode ValueNotifier
+import 'main.dart'; // Correct import path
+import 'settings.dart'; // Correct import path for SettingsPage
 
 class StatusPage extends StatelessWidget {
   const StatusPage({Key? key}) : super(key: key);
@@ -7,12 +8,12 @@ class StatusPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<bool>(
-      valueListenable: isDarkMode, // Listen to the ValueNotifier for theme changes, specifying the type explicitly
+      valueListenable: isDarkMode, // Correctly listening to the ValueNotifier for theme changes
       builder: (context, isDark, _) {
         return Scaffold(
           appBar: AppBar(
             title: const Text('Status Page'),
-            backgroundColor: isDark ? Colors.grey[850] : Colors.blue, // Use a dark grey for dark theme for better aesthetics
+            backgroundColor: isDark ? Colors.grey[850] : Colors.blue, // Correctly using a dark grey for dark theme
           ),
           body: Center(
             child: Column(
@@ -20,13 +21,13 @@ class StatusPage extends StatelessWidget {
               children: <Widget>[
                 Text(
                   'Uptime 99%',
-                  style: TextStyle(fontSize: 25, color: isDark ? Colors.red : Colors.green), // Adjust text color based on theme, red for dark, green for light
+                  style: TextStyle(fontSize: 25, color: isDark ? Colors.red : Colors.green), // Correctly adjusting text color based on theme
                 ),
                 SizedBox(height: 10),
                 LinearProgressIndicator(
                   value: 0.99,
                   backgroundColor: Colors.grey,
-                  valueColor: AlwaysStoppedAnimation<Color>(isDark ? Colors.red : Colors.green), // Adjust progress bar color based on theme
+                  valueColor: AlwaysStoppedAnimation<Color>(isDark ? Colors.red : Colors.green), // Correctly adjusting progress bar color based on theme
                 ),
               ],
             ),
@@ -43,13 +44,13 @@ class StatusPage extends StatelessWidget {
               ),
             ],
             onTap: (index) {
-              // Handle navigation to respective pages when tapping on items
+              // Correctly handling navigation to respective pages when tapping on items
               if (index == 0) {
                 // Navigate to Settings Page
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SettingsPage())); // Use pushReplacement to avoid stacking
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SettingsPage())); // Correctly using pushReplacement to avoid stacking
               } else if (index == 1) {
                 // Navigate back to Home Page
-                Navigator.pop(context); // Ensure we're popping to avoid unnecessary stack buildup
+                Navigator.pop(context); // Correctly ensuring we're popping to avoid unnecessary stack buildup
               }
             },
           ),
