@@ -5,7 +5,7 @@ import 'gpt-api.dart';
 import 'settings.dart';
 import 'status.dart';
 
-final ValueNotifier<bool> isDarkMode = ValueNotifier(true); // Always dark mode
+final ValueNotifier<bool> isDarkMode = ValueNotifier(false); // Starts in light mode
 
 void main() => runApp(const MyApp());
 
@@ -37,7 +37,6 @@ class _MyHomePageState extends State<MyHomePage> {
   final types.User user = const types.User(id: 'user');
   final List<types.Message> messages = [];
   int _selectedIndex = 0;
-  // Removed unused _isLoading field
 
   void _addMessage(String text, {bool isUserMessage = true}) {
     final types.TextMessage message = types.TextMessage(
@@ -45,8 +44,6 @@ class _MyHomePageState extends State<MyHomePage> {
       createdAt: DateTime.now().millisecondsSinceEpoch,
       id: DateTime.now().toString(),
       text: text,
-      // Customizing message bubble colors
-      metadata: {'color': isUserMessage ? 'red' : 'blue', 'textColor': 'white'},
     );
 
     setState(() {
@@ -55,7 +52,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _sendMessage(String text) {
-    // Removed setState call for _isLoading since it's unused
     _addMessage(text); // User messages
     GPTAPI.sendMessage(text).then((response) {
       _addMessage(response, isUserMessage: false); // AI messages
@@ -109,30 +105,12 @@ class _MyHomePageState extends State<MyHomePage> {
               user: user,
               emojiEnlargementBehavior: EmojiEnlargementBehavior.multi,
               hideBackgroundOnEmojiMessages: true,
-              customMessageBuilder: (message, {required int messageWidth}) {
-                // Custom message bubble colors
-                if (message is types.TextMessage) {
-                  final color = message.metadata?['color'] == 'red' ? Colors.red : Colors.blue;
-                  final textColor = Colors.white;
-                  return Container(
-                    padding: const EdgeInsets.all(8),
-                    margin: const EdgeInsets.symmetric(vertical: 4),
-                    decoration: BoxDecoration(
-                      color: color,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Text(
-                      message.text,
-                      style: TextStyle(color: textColor),
-                    ),
-                  );
-                }
-                return SizedBox.shrink(); // Return an empty widget instead of null
-              },
             ),
           ),
           bottomNavigationBar: BottomNavigationBar(
             backgroundColor: isDark ? Colors.black : Colors.white, // BottomNavigationBar color based on theme
+            selectedItemColor: Colors.red, // Keep the selected item color consistent across themes
+            unselectedItemColor: isDark ? Colors.white : Colors.black, // Adjust unselected item color based on theme
             items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(
                 icon: Icon(Icons.chat),

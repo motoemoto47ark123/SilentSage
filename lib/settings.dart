@@ -29,12 +29,11 @@ class SettingsPage extends StatelessWidget {
                     isDarkMode.value = value; // Update the entire app theme
                   },
                   activeTrackColor: Colors.redAccent, // Adjust visibility in dark mode with red to follow the new instruction
-                  activeColor: Colors.black, // Ensure the switch thumb is black when active for better visibility in dark mode
+                  activeColor: Colors.white, // Ensure the switch thumb is white when active for better visibility
                   materialTapTargetSize: MaterialTapTargetSize.padded, // Increase tap target size for better accessibility
-                  thumbColor: MaterialStateProperty.all(Colors.black), // Ensure the thumb color is black
+                  thumbColor: isDark ? MaterialStateProperty.all(Colors.black) : MaterialStateProperty.all(Colors.white), // Ensure the thumb color is black when not toggled and white when toggled
                   trackColor: MaterialStateProperty.all(Colors.black.withOpacity(0.5)), // Slightly transparent black track color
                   splashRadius: 28, // Increase splash radius for visual feedback
-                  // Removed the 'shape' parameter as it's not defined for the Switch widget
                 ),
               ],
             ),
