@@ -4,7 +4,7 @@ import 'package:flutter_chat_types/flutter_chat_types.dart' as types; // Correct
 import 'gpt-api.dart';
 import 'settings.dart';
 import 'status.dart';
-import 'package:permission_handler/permission_handler.dart';
+// Removed import for 'package:permission_handler/permission_handler.dart' as it does not exist
 
 final ValueNotifier<bool> isDarkMode = ValueNotifier(false);
 
@@ -42,12 +42,10 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    _requestPermissions();
+    // _requestPermissions(); Removed _requestPermissions call as Permission handler is not used
   }
 
-  Future<void> _requestPermissions() async {
-    await Permission.internet.request();
-  }
+  // Removed _requestPermissions method as Permission handler is not used
 
   void _addMessage(String text, {bool isUserMessage = true}) {
     final types.TextMessage message = types.TextMessage(
@@ -63,22 +61,15 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _sendMessage(String text) {
-    Permission.internet.status.then((status) {
-      if (status.isGranted) {
-        _addMessage(text);
-        GPTAPI.sendMessage(text).then((response) {
-          _addMessage(response, isUserMessage: false);
-        }).catchError((error) {
-          // Enhanced error handling
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to send message: $error')),
-          );
-        });
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Internet permission not granted')),
-        );
-      }
+    // Removed Permission check and directly add message
+    _addMessage(text);
+    GPTAPI.sendMessage(text).then((response) {
+      _addMessage(response, isUserMessage: false);
+    }).catchError((error) {
+      // Enhanced error handling
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to send message: $error')),
+      );
     });
   }
 
