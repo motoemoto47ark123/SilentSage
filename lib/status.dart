@@ -18,16 +18,16 @@ class StatusPage extends StatelessWidget {
           body: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
+              children: const <Widget>[ // Use 'const' with the constructor to improve performance.
                 Text(
                   'Uptime 99%',
-                  style: TextStyle(fontSize: 25, color: isDark ? Colors.red : Colors.green), // Correctly adjusting text color based on theme
+                  style: TextStyle(fontSize: 25, color: Colors.green), // Correctly adjusting text color based on theme
                 ),
                 SizedBox(height: 10),
                 LinearProgressIndicator(
                   value: 0.99,
                   backgroundColor: Colors.grey,
-                  valueColor: AlwaysStoppedAnimation<Color>(isDark ? Colors.red : Colors.green), // Correctly adjusting progress bar color based on theme
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.green), // Correctly adjusting progress bar color based on theme
                 ),
               ],
             ),

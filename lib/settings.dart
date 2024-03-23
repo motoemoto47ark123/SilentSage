@@ -28,7 +28,7 @@ class SettingsPage extends StatelessWidget {
                   onChanged: (value) {
                     isDarkMode.value = value; // Update the entire app theme
                   },
-                  semanticLabel: 'Toggle Dark Mode', // Added semantic label for accessibility
+                  // Removed semanticLabel as it's not a defined parameter for Switch widget
                 ),
               ],
             ),

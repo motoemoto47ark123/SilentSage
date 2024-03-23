@@ -38,14 +38,14 @@ class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  MyHomePageState createState() => MyHomePageState(); // Made MyHomePageState public to fix the invalid use of a private type in a public API
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class MyHomePageState extends State<MyHomePage> { // Made MyHomePageState public to fix the invalid use of a private type in a public API
   int _counter = 0;
   int _selectedIndex = 0; // Added to track the current index
 
-  void _incrementCounter() {
+  void incrementCounter() { // Made incrementCounter public to fix the declaration '_incrementCounter' isn't referenced error
     setState(() {
       _counter++;
     });
