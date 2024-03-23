@@ -4,6 +4,7 @@ import 'package:flutter_chat_types/flutter_chat_types.dart' as types; // Correct
 import 'gpt-api.dart';
 import 'settings.dart';
 import 'status.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 final ValueNotifier<bool> isDarkMode = ValueNotifier(false);
 
@@ -38,6 +39,16 @@ class _MyHomePageState extends State<MyHomePage> {
   final List<types.Message> messages = []; // Corrected Message class reference
   int _selectedIndex = 0;
 
+  @override
+  void initState() {
+    super.initState();
+    _requestPermissions();
+  }
+
+  Future<void> _requestPermissions() async {
+    await Permission.internet.request();
+  }
+
   void _addMessage(String text, {bool isUserMessage = true}) {
     final types.TextMessage message = types.TextMessage(
       author: isUserMessage ? user : const types.User(id: 'ai'), // Corrected User and TextMessage class references
@@ -52,11 +63,22 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _sendMessage(String text) {
-    _addMessage(text);
-    GPTAPI.sendMessage(text).then((response) {
-      _addMessage(response, isUserMessage: false);
-    }).catchError((error) {
-      // Removed the print statement to adhere to best practices for production code
+    Permission.internet.status.then((status) {
+      if (status.isGranted) {
+        _addMessage(text);
+        GPTAPI.sendMessage(text).then((response) {
+          _addMessage(response, isUserMessage: false);
+        }).catchError((error) {
+          // Enhanced error handling
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to send message: $error')),
+          );
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Internet permission not granted')),
+        );
+      }
     });
   }
 
