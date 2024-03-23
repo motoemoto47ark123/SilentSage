@@ -6,13 +6,13 @@ class StatusPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: isDarkMode, // Listen to the ValueNotifier for theme changes
-      builder: (context, bool isDark, _) {
+    return ValueListenableBuilder<bool>(
+      valueListenable: isDarkMode, // Listen to the ValueNotifier for theme changes, specifying the type explicitly
+      builder: (context, isDark, _) {
         return Scaffold(
           appBar: AppBar(
             title: const Text('Status Page'),
-            backgroundColor: isDark ? Colors.black : Colors.blue, // Use isDark to determine the AppBar color, keeping blue for light theme as per original code
+            backgroundColor: isDark ? Colors.grey[850] : Colors.blue, // Use a dark grey for dark theme for better aesthetics
           ),
           body: Center(
             child: Column(
@@ -46,10 +46,10 @@ class StatusPage extends StatelessWidget {
               // Handle navigation to respective pages when tapping on items
               if (index == 0) {
                 // Navigate to Settings Page
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const SettingsPage()));
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SettingsPage())); // Use pushReplacement to avoid stacking
               } else if (index == 1) {
                 // Navigate back to Home Page
-                Navigator.pop(context);
+                Navigator.pop(context); // Ensure we're popping to avoid unnecessary stack buildup
               }
             },
           ),

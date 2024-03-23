@@ -12,14 +12,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
+    return ValueListenableBuilder<bool>(
       valueListenable: isDarkMode, // Listen to the ValueNotifier
       builder: (context, value, child) {
         return MaterialApp(
           title: _title,
           theme: ThemeData(
             brightness: value ? Brightness.dark : Brightness.light, // Adjust brightness based on the ValueNotifier
-            primaryColor: value ? Colors.black : Colors.white, // Adjust primary color based on the theme
+            primaryColor: value ? Colors.grey[850] : Colors.white, // Adjust primary color based on the theme, using dark grey for dark mode
+            appBarTheme: AppBarTheme(
+              backgroundColor: value ? Colors.grey[850] : Colors.white, // Ensure AppBar color consistency across the app
+            ),
             colorScheme: ColorScheme.fromSwatch().copyWith(
               secondary: Colors.red, // Keeping red as the secondary color for both themes
             ),
@@ -40,11 +43,27 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  int _selectedIndex = 0; // Added to track the current index
 
   void _incrementCounter() {
     setState(() {
       _counter++;
     });
+  }
+
+  void _onItemTapped(int index) {
+    if (index != _selectedIndex) { // Check if the current page is not the same as the one being navigated to
+      setState(() {
+        _selectedIndex = index;
+      });
+      if (index == 0) {
+        // Navigate to Settings Page
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SettingsPage())); // Using pushReplacement to avoid stacking
+      } else if (index == 1) {
+        // Navigate to Status Page
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const StatusPage())); // Using pushReplacement to avoid stacking
+      }
+    }
   }
 
   @override
@@ -78,16 +97,8 @@ class _MyHomePageState extends State<MyHomePage> {
             label: 'Status',
           ),
         ],
-        onTap: (index) {
-          // Handle navigation to respective pages when tapping on items
-          if (index == 0) {
-            // Navigate to Settings Page
-            Navigator.push(context, MaterialPageRoute(builder: (context) => const SettingsPage()));
-          } else if (index == 1) {
-            // Navigate to Status Page
-            Navigator.push(context, MaterialPageRoute(builder: (context) => const StatusPage()));
-          }
-        },
+        currentIndex: _selectedIndex, // Added to manage the current selection
+        onTap: _onItemTapped,
       ),
     );
   }

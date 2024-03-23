@@ -6,13 +6,13 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: isDarkMode, // Listen to the ValueNotifier for theme changes
-      builder: (context, bool isDark, _) {
+    return ValueListenableBuilder<bool>(
+      valueListenable: isDarkMode, // Listen to the ValueNotifier for theme changes, specifying the type explicitly
+      builder: (context, isDark, _) {
         return Scaffold(
           appBar: AppBar(
             title: const Text('Settings Page'),
-            backgroundColor: isDark ? Colors.black : Colors.white, // Adjust AppBar color based on theme
+            backgroundColor: isDark ? Colors.grey[850] : Theme.of(context).appBarTheme.backgroundColor, // Adjust AppBar color based on theme, using dark grey for dark mode
           ),
           body: Center(
             child: Column(
@@ -27,6 +27,7 @@ class SettingsPage extends StatelessWidget {
                   onChanged: (value) {
                     isDarkMode.value = value; // Update the entire app theme
                   },
+                  semanticLabel: 'Toggle Dark Mode', // Added semantic label for accessibility
                 ),
               ],
             ),
@@ -36,20 +37,26 @@ class SettingsPage extends StatelessWidget {
               BottomNavigationBarItem(
                 icon: Icon(Icons.home),
                 label: 'Main Page',
+                // Added semantic labels for better accessibility
+                tooltip: 'Navigate to Main Page',
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.assessment),
                 label: 'Status',
+                // Added semantic labels for better accessibility
+                tooltip: 'Navigate to Status Page',
               ),
             ],
             onTap: (index) {
               // Handle navigation to respective pages when tapping on items
               if (index == 0) {
                 // Navigate back to Home Page
-                Navigator.pop(context);
+                if (!ModalRoute.of(context)!.isFirst) {
+                  Navigator.pop(context);
+                }
               } else if (index == 1) {
                 // Navigate to Status Page
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const StatusPage()));
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const StatusPage()));
               }
             },
           ),
