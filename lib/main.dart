@@ -48,7 +48,7 @@ class MyHomePage extends StatefulWidget {
 
 class MyHomePageState extends State<MyHomePage> { // Made MyHomePageState public to fix the invalid use of a private type in a public API
   int _counter = 0;
-  int _selectedIndex = 2; // Updated to indicate that we are on the Main Page
+  int _selectedIndex = 0; // Updated to indicate that we are on the Home Page
 
   void incrementCounter() { // Made incrementCounter public to fix the declaration '_incrementCounter' isn't referenced error
     setState(() {
@@ -61,10 +61,7 @@ class MyHomePageState extends State<MyHomePage> { // Made MyHomePageState public
       setState(() {
         _selectedIndex = index;
       });
-      if (index == 0) {
-        // Navigate to Home Page
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MyApp())); // Using pushReplacement to avoid stacking
-      } else if (index == 1) {
+      if (index == 1) {
         // Navigate to Status Page
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const StatusPage())); // Using pushReplacement to avoid stacking
       } else if (index == 2) {
@@ -99,7 +96,7 @@ class MyHomePageState extends State<MyHomePage> { // Made MyHomePageState public
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
-            label: 'Home',
+            label: 'Home Page', // Renamed to Home Page
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.assessment),
@@ -110,10 +107,11 @@ class MyHomePageState extends State<MyHomePage> { // Made MyHomePageState public
             label: 'Settings',
           ),
         ],
-        currentIndex: _selectedIndex, // Updated to manage the current selection indicating we are on the Main Page
+        currentIndex: _selectedIndex, // Updated to manage the current selection indicating we are on the Home Page
         onTap: _onItemTapped,
         backgroundColor: isDarkMode.value ? Colors.black : Colors.white, // Adjust BottomNavigationBar background color based on theme
         selectedItemColor: Colors.red, // Keep the selected item color consistent across themes
+        unselectedItemColor: isDarkMode.value ? Colors.white : Colors.black, // Adjust unselected item color based on theme
       ),
     );
   }

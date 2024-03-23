@@ -36,7 +36,7 @@ class SettingsPage extends StatelessWidget {
             items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(
                 icon: Icon(Icons.home),
-                label: 'Main Page',
+                label: 'Home Page', // Renamed to Home Page
                 tooltip: 'Navigate to Main Page', // Added semantic labels for better accessibility
               ),
               BottomNavigationBarItem(
@@ -64,6 +64,9 @@ class SettingsPage extends StatelessWidget {
                   break;
               }
             },
+            backgroundColor: isDark ? Colors.black : Colors.white, // Adjust BottomNavigationBar background color based on theme
+            selectedItemColor: Colors.red, // Keep the selected item color consistent across themes
+            unselectedItemColor: isDark ? Colors.white : Colors.black, // Adjust unselected item color based on theme
           ),
         );
       },

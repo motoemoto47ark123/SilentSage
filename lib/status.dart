@@ -37,7 +37,7 @@ class StatusPage extends StatelessWidget {
             items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(
                 icon: Icon(Icons.home),
-                label: 'Home',
+                label: 'Home Page', // Renamed to Home Page
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.assessment),
@@ -49,12 +49,14 @@ class StatusPage extends StatelessWidget {
               ),
             ],
             currentIndex: 1, // Indicating that we are on the Status Page
+            selectedItemColor: Colors.red, // Keep the selected item color consistent across themes
+            unselectedItemColor: isDark ? Colors.white : Colors.black, // Adjust unselected item color based on theme
             onTap: (index) {
               // Correctly handling navigation to respective pages when tapping on items
               switch (index) {
                 case 0:
                   // Navigate back to Home Page
-                  Navigator.pop(context); // Correctly ensuring we're popping to avoid unnecessary stack buildup
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MyApp())); // Correctly using pushReplacement to avoid stacking
                   break;
                 case 2:
                   // Navigate to Settings Page
