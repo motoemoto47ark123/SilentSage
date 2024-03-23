@@ -11,18 +11,18 @@ dependencies:
     sdk: flutter
   flutter_chat_ui: ^1.5.8
   http: ^0.13.5
-  flutter_launcher_icons: ^0.11.0
+  
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.2
+  flutter_launcher_icons: ^0.11.0
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/logo.png"
 
 flutter:
   uses-material-design: true
-  assets:
-    - lib/app_image.png
-  flutter_icons:
-    android: true
-    ios: true
-    image_path: "lib/app_image.png"
