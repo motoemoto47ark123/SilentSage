@@ -5,6 +5,12 @@ class GPTAPI {
   static const String _apiEndpoint = "http://gpt-proxy.motoemotovps.serv00.net/chat";
   static String? _chatId;
 
+  static void resetChatId() {
+    _chatId = null;
+  }
+
+  static String? get chatId => _chatId;
+
   /// Sends a message to the GPT API and returns the AI's response.
   static Future<String> sendMessage(String message) async {
     final Map<String, dynamic> requestData = {

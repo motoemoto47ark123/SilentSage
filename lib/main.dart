@@ -6,7 +6,7 @@ import 'settings.dart';
 import 'status.dart';
 
 final ValueNotifier<bool> isDarkMode =
-    ValueNotifier(true); // Updated to start in dark mode
+    ValueNotifier(false); // Updated to start in light mode
 
 void main() => runApp(const MyApp());
 
@@ -68,6 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void _resetChat() {
     setState(() {
       messages.clear();
+      GPTAPI.resetChatId(); // Correctly call resetChatId to clean the _chatId
     });
   }
 
@@ -89,6 +90,12 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Chat with AI'),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: _resetChat, // Added reset chat functionality to AppBar
+          ),
+        ],
       ),
       body: FutureBuilder<String>(
         future: _futureMessage,
