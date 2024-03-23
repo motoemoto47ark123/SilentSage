@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
-// Removed the import statement for flutter_chat_types as it's not a dependency
+import 'package:flutter_chat_types/flutter_chat_types.dart' as types; // Corrected import statement for flutter_chat_types
 import 'gpt-api.dart';
 import 'settings.dart';
 import 'status.dart';
@@ -34,15 +34,13 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  // Changed _user to public to fix the error about using a private type in a public API
-  final user = const User(id: 'user');
-  // Changed _messages to final to address the suggestion that it could be final
-  final List<Message> messages = [];
+  final types.User user = const types.User(id: 'user'); // Corrected User class reference
+  final List<types.Message> messages = []; // Corrected Message class reference
   int _selectedIndex = 0;
 
   void _addMessage(String text, {bool isUserMessage = true}) {
-    final message = TextMessage(
-      author: isUserMessage ? user : const User(id: 'ai'),
+    final types.TextMessage message = types.TextMessage(
+      author: isUserMessage ? user : const types.User(id: 'ai'), // Corrected User and TextMessage class references
       createdAt: DateTime.now().millisecondsSinceEpoch,
       id: DateTime.now().toString(),
       text: text,
@@ -94,9 +92,16 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: isDarkMode.value ? Colors.black : Colors.white,
       ),
       body: Chat(
-        messages: messages,
-        onSendPressed: (text) => _sendMessage(text.text),
+        messages: messages.map((m) => m as types.Message).toList(), // Corrected Message class reference and casting
+        onSendPressed: (text) {
+          _sendMessage(text.text);
+        },
         user: user,
+        emojiEnlargementBehavior: types.EmojiEnlargementBehavior.multi, // Added required parameter
+        hideBackgroundOnEmojiMessages: true, // Added required parameter
+        message: types.TextMessage(text: '', author: user, id: '', createdAt: DateTime.now().millisecondsSinceEpoch), // Added required parameter
+        showName: true, // Added required parameter
+        usePreviewData: true, // Added required parameter
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
