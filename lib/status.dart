@@ -1,94 +1,71 @@
-import 'package:flutter/material.dart'; // Importing Flutter Material Design package.
-import 'main.dart'; // Import for the main application entry point.
-import 'settings.dart'; // Import for the SettingsPage widget.
+import 'package:flutter/material.dart'; // This line imports the Material Design library from Flutter, enabling the use of various UI components like Scaffold, AppBar, and Text widgets.
+import 'main.dart'; // This import statement brings in the main.dart file, allowing for navigation to the MyApp widget which serves as the entry point of the application.
+import 'settings.dart'; // This line imports the settings.dart file, making the SettingsPage widget accessible for navigation purposes.
 
-// Defining a StatelessWidget for the Status Page.
+// The StatusPage widget is defined below as a stateless widget, meaning its properties cannot change over time. It is used to display the application's status information.
 class StatusPage extends StatelessWidget {
-  // Constructor accepting a key for widget identification.
+  // The constructor for StatusPage, which optionally accepts a Key object named 'key' for widget identification and management within the Flutter framework.
   const StatusPage({super.key});
 
-  // Overriding the build method to define the UI of the StatusPage.
+  // The build method is overridden here to construct the UI of the StatusPage widget. It takes a BuildContext object as an argument, which holds the location of this widget within the widget tree.
   @override
   Widget build(BuildContext context) {
-    // Using ValueListenableBuilder to rebuild the widget when isDarkMode changes.
+    // The ValueListenableBuilder widget is used here to listen for changes to the isDarkMode ValueNotifier defined in main.dart. It rebuilds its child widget whenever isDarkMode's value changes.
     return ValueListenableBuilder<bool>(
-      valueListenable: isDarkMode, // Listening to the isDarkMode ValueNotifier.
-      builder: (context, isDark, _) {
-        // Builder function to rebuild UI based on isDark value.
-        // Scaffold provides the structure for the page.
+      valueListenable: isDarkMode, // Specifies the ValueNotifier object to listen to, in this case, isDarkMode.
+      builder: (context, isDark, _) { // The builder function defines the widget to be rebuilt in response to value changes. It receives the current value of isDarkMode as 'isDark'.
+        // The Scaffold widget provides a high-level structure for the StatusPage, including an AppBar at the top and a body section for content.
         return Scaffold(
           appBar: AppBar(
-            // AppBar to display at the top of the page.
-            title: const Text('Status Page'), // Title for the AppBar.
-            backgroundColor: isDark
-                ? Colors.black
-                : Colors.white, // Conditional background color based on theme.
+            title: const Text('Status Page'), // Sets the text displayed in the AppBar.
+            backgroundColor: isDark ? Colors.black : Colors.white, // Dynamically sets the AppBar's background color based on the current theme mode (dark or light).
           ),
           body: Center(
-            // Center widget to center the body content.
+            // The Center widget centers its child within itself.
             child: Column(
-              // Column widget to layout widgets vertically.
-              mainAxisAlignment: MainAxisAlignment
-                  .center, // Aligning children to the center of the main axis.
+              // The Column widget arranges its children vertically.
+              mainAxisAlignment: MainAxisAlignment.center, // Centers the Column's children along the main axis.
               children: <Widget>[
-                // List of widgets inside the Column.
                 const Text(
-                  // Text widget to display uptime percentage.
-                  'Uptime 99%',
-                  style: TextStyle(
-                      fontSize: 25, color: Colors.red), // Styling for the text.
+                  'Uptime 99%', // Displays a text indicating the uptime percentage.
+                  style: TextStyle(fontSize: 25, color: Colors.red), // Sets the style of the text, including font size and color.
                 ),
-                const SizedBox(
-                    height: 10), // SizedBox for spacing between widgets.
+                const SizedBox(height: 10), // Provides vertical spacing between widgets.
                 LinearProgressIndicator(
-                  // LinearProgressIndicator to show progress.
-                  value: 0.99, // Value representing the progress.
-                  backgroundColor: isDark
-                      ? Colors.grey
-                      : Colors.white, // Conditional background color.
-                  valueColor: const AlwaysStoppedAnimation<Color>(
-                      Colors.red), // Red color for the progress indicator.
+                  value: 0.99, // Sets the current value of the progress indicator to represent 99% uptime.
+                  backgroundColor: isDark ? Colors.grey : Colors.white, // Dynamically sets the background color of the progress bar.
+                  valueColor: const AlwaysStoppedAnimation<Color>(Colors.red), // Sets the color of the progress indicator to red.
                 ),
               ],
             ),
           ),
           bottomNavigationBar: BottomNavigationBar(
-            // BottomNavigationBar for navigation.
-            backgroundColor: isDark
-                ? Colors.black
-                : Colors.white, // Conditional background color.
-            selectedItemColor: Colors.red, // Color for the selected item.
-            unselectedItemColor: Colors.grey, // Color for the unselected items.
+            backgroundColor: isDark ? Colors.black : Colors.white, // Dynamically sets the background color of the BottomNavigationBar.
+            selectedItemColor: Colors.red, // Sets the color of the selected item in the BottomNavigationBar.
+            unselectedItemColor: Colors.grey, // Sets the color of unselected items in the BottomNavigationBar.
             items: const <BottomNavigationBarItem>[
-              // List of navigation items.
               BottomNavigationBarItem(
-                icon: Icon(Icons.chat), // Icon for chat.
-                label: 'Chat', // Label for chat.
+                icon: Icon(Icons.chat), // Defines an icon for the chat item.
+                label: 'Chat', // Sets the label for the chat item.
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.assessment), // Icon for status.
-                label: 'Status', // Label for status.
+                icon: Icon(Icons.assessment), // Defines an icon for the status item.
+                label: 'Status', // Sets the label for the status item.
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.settings), // Icon for settings.
-                label: 'Settings', // Label for settings.
+                icon: Icon(Icons.settings), // Defines an icon for the settings item.
+                label: 'Settings', // Sets the label for the settings item.
               ),
             ],
-            currentIndex:
-                1, // Current selected index indicating the Status Page.
-            onTap: (index) {
-              // Function to handle item taps.
-              // Conditional navigation based on tapped index.
+            currentIndex: 1, // Sets the currently selected index to 1, corresponding to the Status item.
+            onTap: (index) { // Defines a callback function to handle taps on the BottomNavigationBar items.
+              // Conditional navigation based on the tapped item's index.
               if (index == 0) {
-                // Navigating to the MyApp page if chat is tapped.
-                Navigator.pushReplacement(context,
-                    MaterialPageRoute(builder: (context) => const MyApp()));
+                // Navigates to the MyApp widget if the first item (Chat) is tapped.
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MyApp()));
               } else if (index == 2) {
-                // Navigating to the SettingsPage if settings is tapped.
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const SettingsPage()));
+                // Navigates to the SettingsPage widget if the third item (Settings) is tapped.
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SettingsPage()));
               }
             },
           ),

@@ -1,81 +1,75 @@
-// Imports the 'dart:convert' package for converting the data to JSON format.
+// Importing 'dart:convert' to enable JSON data conversion functionalities, which are essential for processing the API responses.
 import 'dart:convert';
-// Imports the 'cronet_http' package to enable making HTTP requests using Cronet.
+// Importing 'cronet_http' package to utilize Cronet for making efficient HTTP requests. Cronet is an open-source network stack from Google Chrome, offering improved performance.
 import 'package:cronet_http/cronet_http.dart';
-// Imports the 'http' package to use the high-level interface for HTTP requests.
+// Importing 'http' package to provide a high-level API for making HTTP requests. This package simplifies the process of sending network requests and processing responses.
 import 'package:http/http.dart' as http;
 
-// Defines the GPTAPI class to manage interactions with the GPT API.
+// The GPTAPI class is designed to encapsulate all the functionalities required for interacting with the GPT API, including sending messages and managing session state.
 class GPTAPI {
-  // Holds the URL of the GPT API endpoint as a constant string.
+  // _apiEndpoint stores the URL of the GPT API endpoint. It is marked as a constant to ensure that the URL remains unchanged throughout the application lifecycle. The HTTPS protocol is used for secure communication.
   static const String _apiEndpoint =
-      "https://gpt-proxy.motoemotovps.serv00.net/chat"; // Updated to use HTTPS
-  // Static variable to store the chat ID for maintaining the session state.
+      "https://gpt-proxy.motoemotovps.serv00.net/chat";
+  // _chatId is a static variable that holds the unique identifier for the chat session. It is nullable to allow for the possibility of no session being active.
   static String? _chatId;
 
-  // Method to clear the current chat ID, starting a new session.
+  // resetChatId is a static method that clears the current chat ID, effectively starting a new chat session by setting _chatId to null.
   static void resetChatId() {
     _chatId = null;
   }
 
-  // Method to set the current chat ID, useful for maintaining session state across different parts of the app.
+  // setChatId is a static method that assigns a new value to _chatId. This method is useful for restoring a previous session state by setting the chat ID to a specific value.
   static void setChatId(String? chatId) {
     _chatId = chatId;
   }
 
-  // Getter method for retrieving the current chat ID.
+  // The chatId getter method provides read-only access to the current chat ID, allowing other parts of the application to check the session state.
   static String? get chatId => _chatId;
 
-  // Asynchronously sends a message to the GPT API and retrieves the response.
+  // sendMessage is an asynchronous method that sends a message to the GPT API and awaits the response. It returns a Future that resolves to the response text from the API.
   static Future<String> sendMessage(String message) async {
-    // Initializes a map to hold the request data.
+    // requestData is a map that holds the data to be sent in the API request. It includes the message text and an optional system prompt parameter.
     final Map<String, dynamic> requestData = {
-      "message": message, // The message to be sent to the API.
-      "systemPrompt":
-          "", // An optional system prompt parameter, left empty here.
+      "message": message,
+      "systemPrompt": "",
     };
 
-    // Checks if a chat ID exists and includes it in the request data if so.
+    // If a chat ID is already set, it is included in the requestData to maintain the session context with the API.
     if (_chatId != null) {
       requestData["chatId"] = _chatId;
     }
 
-    // Initializes the HTTP client based on the platform.
+    // Initializing the HTTP client. CronetEngine is used to create a Cronet-based HTTP client, offering enhanced performance through the use of the Cronet networking stack.
     final http.Client httpClient;
     final engine = CronetEngine.build(
-      cacheMode: CacheMode.memory,
-      cacheMaxSize: 2 * 1024 * 1024,
-      userAgent: 'SilentSage Agent',
+      cacheMode: CacheMode.memory, // Configures the engine to use in-memory caching.
+      cacheMaxSize: 2 * 1024 * 1024, // Sets the maximum cache size to 2MB.
+      userAgent: 'SilentSage Agent', // Custom user agent string for identifying the client.
     );
     httpClient = CronetClient.fromCronetEngine(engine, closeEngine: true);
 
     try {
-      // Sends a POST request to the API endpoint with the request data.
+      // Sending a POST request to the GPT API endpoint with the requestData. The request includes a header specifying the content type as JSON.
       final http.Response response = await httpClient.post(
-        Uri.parse(_apiEndpoint), // Parses the API endpoint URL.
-        headers: {
-          'Content-Type': 'application/json'
-        }, // Sets the content type header to application/json.
-        body: jsonEncode(requestData), // Encodes the request data to JSON.
+        Uri.parse(_apiEndpoint),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(requestData),
       );
 
-      // Checks if the response status code is 200 (OK).
+      // Checking the response status code. If it is 200 (OK), the response body is decoded from JSON and processed.
       if (response.statusCode == 200) {
-        // Decodes the JSON response body.
         final Map<String, dynamic> responseData = jsonDecode(response.body);
-        // Updates the chat ID with the one provided in the response for future requests.
-        _chatId = responseData["chatId"];
-        // Returns the AI's response text.
-        return responseData["response"];
+        _chatId = responseData["chatId"]; // Updating the chat ID with the new value from the response.
+        return responseData["response"]; // Returning the AI's response text.
       } else {
-        // Returns an error message if the status code is not 200.
+        // If the status code is not 200, an error message is returned indicating a non-successful status code.
         return "Error: Received a non-successful status code: ${response.statusCode}";
       }
     } catch (e) {
-      // Catches and returns any errors encountered during the request.
+      // Catching and returning any errors encountered during the request. This ensures that the application can gracefully handle network or API failures.
       return "Error: $e";
     } finally {
-      // Closes the HTTP client.
+      // Ensuring that the HTTP client is closed after the request is completed to free up resources and prevent memory leaks.
       httpClient.close();
     }
   }
