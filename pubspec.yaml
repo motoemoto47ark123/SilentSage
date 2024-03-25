@@ -1,0 +1,29 @@
+name: SilentSage
+description: this is my unlimited ai chat app
+
+version: 1.1.0
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_chat_ui: ^1.6.12
+  http: ^1.2.1
+  cronet_http: ^1.2.0
+  
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.1
+  flutter_launcher_icons: ^0.13.1
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/logo.png"
+
+flutter:
+  uses-material-design: true
