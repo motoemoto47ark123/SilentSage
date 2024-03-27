@@ -8,7 +8,7 @@ import 'prodia-api.dart' as prodia; // Imports a custom Prodia API handler with 
 import 'dart:async'; // Imports Dart's asynchronous library, which includes classes like Future and Stream for handling asynchronous operations.
 
 // A global notifier that tracks the theme mode (dark or light) across the app.
-final ValueNotifier<bool> isDarkMode = ValueNotifier(false);
+final ValueNotifier<bool> isDarkMode = ValueNotifier(true);
 
 // Global variables to maintain the chat session's state across different pages without persisting data to the device's memory.
 final List<types.Message> globalMessages = []; // Holds the list of chat messages.
