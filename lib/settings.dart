@@ -7,7 +7,7 @@ import 'app_state.dart';
 import 'actions.dart';
 
 class SettingsPage extends StatelessWidget {
-  const SettingsPage({super.key});
+  const SettingsPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -76,12 +76,12 @@ class SettingsPage extends StatelessWidget {
                 Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const MyApp())); 
+                        builder: (context) => MyApp(store: StoreProvider.of<AppState>(context)))); 
               } else if (index == 1) {
                 Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const StatusPage())); 
+                        builder: (context) => StatusPage(store: StoreProvider.of<AppState>(context)))); 
               }
             },
           ),

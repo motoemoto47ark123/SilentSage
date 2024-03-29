@@ -7,7 +7,7 @@ import 'app_state.dart';
 import 'actions.dart';
 
 class StatusPage extends StatelessWidget {
-  const StatusPage({super.key});
+  const StatusPage({Key? key}) : super(key: key); // Removed the 'super.key' to 'key' to fix the error
 
   @override
   Widget build(BuildContext context) {
@@ -57,9 +57,9 @@ class StatusPage extends StatelessWidget {
             currentIndex: 1,
             onTap: (index) {
               if (index == 0) {
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MyApp()));
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyApp())); // Removed the 'store' parameter since it's not required and causing an error
               } else if (index == 2) {
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SettingsPage()));
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SettingsPage())); // Made SettingsPage constructor const to match its definition
               }
             },
           ),

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
-import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
+import 'package:flutter/services.dart';
 import 'gpt-api.dart';
 import 'settings.dart';
 import 'status.dart';
@@ -12,13 +12,11 @@ import 'app_state.dart';
 import 'reducers.dart';
 import 'actions.dart';
 
-// The main entry point of the Flutter application.
 void main() {
   final store = Store<AppState>(appReducer, initialState: AppState.initial());
   runApp(MyApp(store: store));
 }
 
-// Defines the MyApp widget, which serves as the root of the application.
 class MyApp extends StatelessWidget {
   final Store<AppState> store;
 
@@ -32,16 +30,15 @@ class MyApp extends StatelessWidget {
         home: const MyHomePage(),
         theme: ThemeData.light(),
         darkTheme: ThemeData.dark(),
-        themeMode: StoreConnector<AppState, bool>(
-          converter: (store) => store.state.isDarkMode,
-          builder: (context, isDarkMode) => isDarkMode ? ThemeMode.dark : ThemeMode.light,
+        themeMode: StoreConnector<AppState, ThemeMode>(
+          converter: (store) => store.state.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+          builder: (context, themeMode) => themeMode,
         ),
       ),
     );
   }
 }
 
-// Defines a stateful widget for the home page of the app.
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
 
@@ -49,7 +46,6 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-// The state class associated with MyHomePage, containing the dynamic state of the home page.
 class _MyHomePageState extends State<MyHomePage> {
   late types.User user;
   final TextEditingController _textController = TextEditingController();
@@ -59,7 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
     user = types.User(id: 'user');
     _textController.addListener(_handleTextChange);
-    StoreProvider.of<AppState>(context).dispatch(SetChatIdAction(globalChatId));
+    StoreProvider.of<AppState>(context, listen: false).dispatch(SetChatIdAction(globalChatId));
   }
 
   @override
@@ -71,7 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void _handleTextChange() {
     final text = _textController.text;
     final isVisible = text.isNotEmpty;
-    StoreProvider.of<AppState>(context).dispatch(UpdateSendButtonVisibilityAction(isVisible));
+    StoreProvider.of<AppState>(context, listen: false).dispatch(UpdateSendButtonVisibilityAction(isVisible));
   }
 
   @override
@@ -87,10 +83,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 itemCount: vm.messages.length,
                 itemBuilder: (context, index) {
                   final message = vm.messages[index];
-                  if (message is types.TextMessage) {
-                    return _buildTextMessageBubble(message);
-                  }
-                  return const SizedBox.shrink();
+                  return message is types.TextMessage ? _buildTextMessageBubble(message) : const SizedBox.shrink();
                 },
               ),
             ),
@@ -130,7 +123,7 @@ class _MyHomePageState extends State<MyHomePage> {
             BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
           ],
           currentIndex: vm.selectedIndex,
-          onTap: (index) => StoreProvider.of<AppState>(context).dispatch(UpdateSelectedIndexAction(index)),
+          onTap: (index) => StoreProvider.of<AppState>(context, listen: false).dispatch(UpdateSelectedIndexAction(index)),
         ),
       ),
     );

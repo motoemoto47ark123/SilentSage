@@ -1,6 +1,7 @@
 import 'package:redux/redux.dart';
 import 'app_state.dart';
 import 'actions.dart';
+import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 
 // The main reducer function that combines all the reducers for the AppState
 AppState appReducer(AppState state, dynamic action) {
