@@ -57,7 +57,7 @@ class StatusPage extends StatelessWidget {
             currentIndex: 1,
             onTap: (index) {
               if (index == 0) {
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyApp())); // Removed the 'store' parameter since it's not required and causing an error
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MyApp(store: StoreProvider.of<AppState>(context)))); // Added the 'store' parameter as required
               } else if (index == 2) {
                 Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SettingsPage())); // Made SettingsPage constructor const to match its definition
               }

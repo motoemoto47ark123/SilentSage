@@ -76,12 +76,12 @@ class SettingsPage extends StatelessWidget {
                 Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => MyApp(store: StoreProvider.of<AppState>(context)))); 
+                        builder: (context) => MyApp(store: StoreProvider.of<AppState>(context)))); // Added the 'store' parameter as required
               } else if (index == 1) {
                 Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => StatusPage(store: StoreProvider.of<AppState>(context)))); 
+                        builder: (context) => const StatusPage())); // Made StatusPage constructor const to match its definition
               }
             },
           ),

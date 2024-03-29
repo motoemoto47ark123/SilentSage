@@ -20,19 +20,19 @@ void main() {
 class MyApp extends StatelessWidget {
   final Store<AppState> store;
 
-  const MyApp({super.key, required this.store});
+  const MyApp({Key? key, required this.store}) : super(key: key); // Updated to use Key? key instead of super.key
 
   @override
   Widget build(BuildContext context) {
     return StoreProvider<AppState>(
       store: store,
-      child: MaterialApp(
-        home: const MyHomePage(),
-        theme: ThemeData.light(),
-        darkTheme: ThemeData.dark(),
-        themeMode: StoreConnector<AppState, ThemeMode>(
-          converter: (store) => store.state.isDarkMode ? ThemeMode.dark : ThemeMode.light,
-          builder: (context, themeMode) => themeMode,
+      child: StoreConnector<AppState, ThemeMode>(
+        converter: (store) => store.state.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+        builder: (context, themeMode) => MaterialApp(
+          home: const MyHomePage(),
+          theme: ThemeData.light(),
+          darkTheme: ThemeData.dark(),
+          themeMode: themeMode, // Directly using the themeMode from StoreConnector
         ),
       ),
     );
@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+  const MyHomePage({Key? key}) : super(key: key); // Updated to use Key? key instead of super.key
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -49,12 +49,14 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   late types.User user;
   final TextEditingController _textController = TextEditingController();
+  String? globalChatId;
 
   @override
   void initState() {
     super.initState();
     user = types.User(id: 'user');
     _textController.addListener(_handleTextChange);
+    globalChatId = "some_chat_id"; // Assuming a default or fetched chat ID
     StoreProvider.of<AppState>(context, listen: false).dispatch(SetChatIdAction(globalChatId));
   }
 
@@ -94,7 +96,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   Expanded(
                     child: TextField(
                       controller: _textController,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         hintText: "Type a message",
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(20),
