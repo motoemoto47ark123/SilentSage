@@ -4,6 +4,10 @@ import 'dart:io'; // Importing Dart's library for File, HTTP, and other I/O oper
 import 'package:cronet_http/cronet_http.dart'; // Importing the cronet_http package for making HTTP requests.
 import 'package:http/http.dart' as http; // Importing the http package with a namespace 'http' to avoid naming conflicts.
 import 'package:path/path.dart' as path; // Importing the path package with a namespace 'path' for path operations.
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:redux/redux.dart';
+import 'app_state.dart';
+import 'actions.dart';
 
 // Defining the ProdiaAPI class to encapsulate all API-related operations for the Prodia service.
 class ProdiaAPI {
@@ -13,7 +17,7 @@ class ProdiaAPI {
   static const String _jobStatusEndpoint = "https://api.prodia.com/v1/job/";
 
   // Declaring a static asynchronous method to generate an image based on a given prompt.
-  static Future<Map<String, dynamic>> generateImage(String prompt) async {
+  static Future<Map<String, dynamic>> generateImage(String prompt, Store<AppState> store) async {
     // Initializing a request data map with parameters required by the Prodia API for image generation.
     final Map<String, dynamic> requestData = {
       "model": "v1-5-pruned-emaonly.safetensors [d7049739]",
@@ -53,7 +57,7 @@ class ProdiaAPI {
         // Extracting the job ID from the response body to poll for the job status.
         final String jobId = jsonDecode(response.body)["job"];
         // Calling a helper method to poll the job status and return the result.
-        return await _pollJobStatus(httpClient, jobId);
+        return await _pollJobStatus(httpClient, jobId, store);
       } else {
         // Returning an error map if the response status code is not 200.
         return {"error": "Received a non-successful status code: ${response.statusCode}"};
@@ -68,7 +72,7 @@ class ProdiaAPI {
   }
 
   // Declaring a private static asynchronous method to poll the job status until completion.
-  static Future<Map<String, dynamic>> _pollJobStatus(http.Client httpClient, String jobId) async {
+  static Future<Map<String, dynamic>> _pollJobStatus(http.Client httpClient, String jobId, Store<AppState> store) async {
     // Defining a constant duration to wait between polling attempts.
     const duration = Duration(seconds: 5);
     // Entering a loop to continuously poll the job status.
@@ -98,6 +102,8 @@ class ProdiaAPI {
           final int fileSize = imageResponse.bodyBytes.length;
           // Generating a unique image ID using the current timestamp as a workaround.
           final int imageId = DateTime.now().millisecondsSinceEpoch;
+          // Dispatching an action to update the Redux store with the new image details.
+          store.dispatch(UpdateImageDetailsAction(imageId, imageUrl, fileName, fileSize));
           // Returning a map with the image details.
           return {
             "imageId": imageId, // Providing an int ID instead of a String.
