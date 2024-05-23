@@ -165,10 +165,14 @@ class _MyHomePageState extends State<MyHomePage> {
         loadingState.stopLoading(); // Ensures the loading state is stopped even if an error occurs.
       });
     } else if (_selectedService == 'cohere') {
-      CohereAPI.sendMessage(text).then((response) {
+      CohereAPI.sendChatMessage(text).then((response) {
         // Handles the plain text response from the Cohere chatbot.
-        _addMessage(response, isUserMessage: false); // Adds the Cohere's response to the chat.
-        loadingState.stopLoading(); // Stops the loading state once the Cohere responds.
+        if (response != null && response.containsKey('text')) {
+          _addMessage(response['text'], isUserMessage: false); // Adds the Cohere's response to the chat.
+          loadingState.stopLoading(); // Stops the loading state once the Cohere responds.
+        } else {
+          throw Exception('Invalid response from Cohere API');
+        }
       }).catchError((error) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Failed to send message: $error')), // Displays an error message if the send fails.
@@ -345,7 +349,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     return Container(
       padding: const EdgeInsets.all(8), // Adds padding inside the bubble.
-      margin: const EdgeInsets.symmetric(vertical: 4, horizontal 8), // Adds margin around the bubble.
+      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8), // Adds margin around the bubble.
       decoration: BoxDecoration(
         color: bubbleColor, // Applies the determined background color.
         borderRadius: BorderRadius.circular(12), // Rounds the corners of the bubble.
