@@ -2,6 +2,7 @@ import 'package:flutter/material.dart'; // This line imports the Material Design
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types; // Imports the Flutter Chat Types package with an alias 'types' for easy reference to message types.
 import 'package:flutter/services.dart'; // Imports Flutter's services library, which includes functionalities like clipboard access.
 import 'gpt-api.dart'; // Imports a custom API handler for interacting with a GPT-based service.
+import 'cohere-api.dart'; // Imports a custom Cohere API handler for chatbot interactions.
 import 'settings.dart'; // Imports the settings page for the application, allowing users to adjust app preferences.
 import 'status.dart'; // Imports the status page, likely used to display some form of user or application status.
 import 'prodia-api.dart' as prodia; // Imports a custom Prodia API handler with an alias 'prodia', used for AI image generation.
@@ -80,7 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0; // Tracks the currently selected index in the bottom navigation bar.
   final TextEditingController _textController = TextEditingController(); // Manages the text input field for chat messages.
   bool _isSendButtonVisible = false; // Controls the visibility of the send button based on text input.
-  String _selectedService = 'chatbot'; // Tracks the currently selected service (e.g., chatbot or AI image generation).
+  String _selectedService = 'gpt-3'; // Tracks the currently selected service (e.g., GPT-3, Cohere, or AI image generation).
 
   @override
   void initState() {
@@ -152,11 +153,22 @@ class _MyHomePageState extends State<MyHomePage> {
     final text = message.text;
     _addMessage(text); // Immediately displays the user's message in the chat.
     loadingState.startLoading(); // Initiates the loading state.
-    if (_selectedService == 'chatbot') {
+    if (_selectedService == 'gpt-3') {
       GPTAPI.sendMessage(text).then((response) {
         // Handles the plain text response from the AI.
         _addMessage(response, isUserMessage: false); // Adds the AI's response to the chat.
         loadingState.stopLoading(); // Stops the loading state once the AI responds.
+      }).catchError((error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to send message: $error')), // Displays an error message if the send fails.
+        );
+        loadingState.stopLoading(); // Ensures the loading state is stopped even if an error occurs.
+      });
+    } else if (_selectedService == 'cohere') {
+      CohereAPI.sendMessage(text).then((response) {
+        // Handles the plain text response from the Cohere chatbot.
+        _addMessage(response, isUserMessage: false); // Adds the Cohere's response to the chat.
+        loadingState.stopLoading(); // Stops the loading state once the Cohere responds.
       }).catchError((error) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Failed to send message: $error')), // Displays an error message if the send fails.
@@ -209,7 +221,8 @@ class _MyHomePageState extends State<MyHomePage> {
           DropdownButton<String>(
             value: _selectedService, // Binds the selected service to the dropdown.
             items: <DropdownMenuItem<String>>[
-              DropdownMenuItem(value: 'chatbot', child: Text('Chatbot')), // Option for the chatbot service.
+              DropdownMenuItem(value: 'gpt-3', child: Text('GPT-3')), // Option for the GPT-3 service.
+              DropdownMenuItem(value: 'cohere', child: Text('Cohere')), // Option for the Cohere chatbot service.
               DropdownMenuItem(value: 'ai_generation', child: Text('AI Generation')), // Option for the AI image generation service.
             ],
             onChanged: (value) {
@@ -332,7 +345,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     return Container(
       padding: const EdgeInsets.all(8), // Adds padding inside the bubble.
-      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8), // Adds margin around the bubble.
+      margin: const EdgeInsets.symmetric(vertical: 4, horizontal 8), // Adds margin around the bubble.
       decoration: BoxDecoration(
         color: bubbleColor, // Applies the determined background color.
         borderRadius: BorderRadius.circular(12), // Rounds the corners of the bubble.
