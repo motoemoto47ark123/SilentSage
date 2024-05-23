@@ -149,10 +149,10 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   // Sends a message and handles the response, either by displaying the AI's text response or generating an image.
-  void _sendMessage(types.PartialText message) {
-    final text = message.text;
+  void _sendMessage(String text) {
     _addMessage(text); // Immediately displays the user's message in the chat.
     loadingState.startLoading(); // Initiates the loading state.
+
     if (_selectedService == 'gpt-3') {
       GPTAPI.sendMessage(text).then((response) {
         // Handles the plain text response from the AI.
@@ -166,12 +166,11 @@ class _MyHomePageState extends State<MyHomePage> {
       });
     } else if (_selectedService == 'cohere') {
       CohereAPI.sendChatMessage(text).then((response) {
-        // Handles the plain text response from the Cohere chatbot.
         if (response != null && response.containsKey('text')) {
           _addMessage(response['text'], isUserMessage: false); // Adds the Cohere's response to the chat.
           loadingState.stopLoading(); // Stops the loading state once the Cohere responds.
         } else {
-          throw Exception('Invalid response from Cohere API');
+          throw Exception(response['error'] ?? 'Invalid response from Cohere API');
         }
       }).catchError((error) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -285,7 +284,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 IconButton(
                   icon: const Icon(Icons.send), // Displays a send icon.
                   onPressed: _isSendButtonVisible
-                      ? () => _sendMessage(types.PartialText(text: _textController.text)) // Sends the message when the icon is pressed.
+                      ? () => _sendMessage(_textController.text) // Sends the message when the icon is pressed.
                       : null, // Disables the button when there's no text to send.
                 ),
               ],
@@ -349,7 +348,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     return Container(
       padding: const EdgeInsets.all(8), // Adds padding inside the bubble.
-      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8), // Adds margin around the bubble.
+      margin: const EdgeInsets.symmetric(vertical: 4, horizontal 8), // Adds margin around the bubble.
       decoration: BoxDecoration(
         color: bubbleColor, // Applies the determined background color.
         borderRadius: BorderRadius.circular(12), // Rounds the corners of the bubble.

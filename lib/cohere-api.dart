@@ -7,7 +7,7 @@ class CohereAPI {
   static const String sessionUrl = "https://no-limts-ai-1.motoemotovps.xyz/user_sessions";
   static const String userIdGenUrl = "https://no-limts-ai-1.motoemotovps.xyz/generate_user_id";
 
-  static Future<Map<String, dynamic>> sendChatMessage(String message) async {
+  static Future<Map<String, dynamic>> sendChatMessage(String message, {String? preamble}) async {
     if (message.isEmpty) {
       return {'error': 'Message cannot be empty'};
     }
@@ -24,6 +24,10 @@ class CohereAPI {
 
     List<Map<String, dynamic>> chatHistoryFormatted = chatHistory.containsKey('sessions') ? List<Map<String, dynamic>>.from(chatHistory['sessions']) : [];
     chatHistoryFormatted.add({"role": "USER", "message": message});
+
+    if (preamble != null) {
+      chatHistoryFormatted.add({"role": "SYSTEM", "message": preamble});
+    }
 
     Map<String, dynamic> payload = {
       'user_id': userId,
@@ -44,7 +48,16 @@ class CohereAPI {
     }
 
     if (response.statusCode == 200) {
-      return jsonDecode(response.body);
+      try {
+        final decodedResponse = jsonDecode(response.body);
+        if (decodedResponse['response'] != null) {
+          return {'text': decodedResponse['response'], 'user_id': userId};
+        } else {
+          return {'error': 'Invalid response structure'};
+        }
+      } catch (e) {
+        return {'error': 'Failed to decode response: $e'};
+      }
     } else {
       return {'error': jsonDecode(response.body)};
     }
@@ -86,4 +99,5 @@ class CohereAPI {
     }
   }
 }
+
 
